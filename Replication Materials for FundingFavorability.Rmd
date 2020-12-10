@@ -1,0 +1,261 @@
+---
+title: "Replication Materials for: 'Funding and Favorability: Exploring the Relationship Between Candidate Favorability Ratings and Fundraising Locale in U.S. Senate Election'"
+author: 
+  - AlexaBarnes^[American University]
+date: "2020-12-09"
+---
+
+```{r Setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+#Install Preliminary Packages
+```{r}
+install.packages("devtools")
+library(usethis)
+library(devtools)
+```
+```{r}
+devtools::install_github("stephenholzman/tidyusafec", force = TRUE)
+```
+#Load Packages
+```{r Packages, echo=TRUE}
+library(readr)
+library(dplyr)
+library(tidyusafec)
+library(tidyverse)
+library(utils)
+library(repmis)
+```
+#Define API Key
+```{r API, echo=FALSE, include=FALSE}
+## In this section, you will need to supply an API Key. For more information, visit: https://api.open.fec.gov/developers/.
+
+API_KEY <-
+```
+#Loading Campaign Data
+```{r Read CSV, echo=TRUE}
+source_data("https://github.com/AlexaGBarnes/FundingFavorability/blob/main/FundingFavorabilityObjects.RData?raw=true")
+Senate_Favorability <- Campaigns
+```
+#Create Year Groups
+```{r Concatenate Committees by Year, echo=TRUE, cache=TRUE}
+Committees2004 <- subset(Senate_Favorability, two_year_transaction_period == "2004", select = committee_ID)
+Committees2006 <- subset(Senate_Favorability, two_year_transaction_period == "2006", select = committee_ID)
+Committees2008 <- subset(Senate_Favorability, two_year_transaction_period == "2008", select = committee_ID)
+Committees2010 <- subset(Senate_Favorability, two_year_transaction_period == "2010", select = committee_ID)
+Committees2012 <- subset(Senate_Favorability, two_year_transaction_period == "2012", select = committee_ID)
+Committees2014 <- subset(Senate_Favorability, two_year_transaction_period == "2014", select = committee_ID)
+Committees2016 <- subset(Senate_Favorability, two_year_transaction_period == "2016", select = committee_ID)
+Committees2018 <- subset(Senate_Favorability, two_year_transaction_period == "2018", select = committee_ID)
+```
+#Pull Itemized Contributions by Year
+```{r, Contributions for 2004, cache = TRUE}
+StorageD42004 <- tibble()
+Contributions2004 <- for(i in 1:nrow(Committees2004)){
+    out <- get_itemized_contributions(committee_id = Committees2004$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/2/2004", 
+                    min_date = "01/01/2004")
+  StorageD42004 <- bind_rows(StorageD42004, out)
+  Sys.sleep(20)}
+tibble(StorageD42004)
+saveRDS(StorageD42004, file = "ItemizedContributions2004.RDS")
+tibble(StorageD42004)
+```
+```{r Contributions for 2006, cache=TRUE}
+StorageD42006 <- tibble()
+Contributions2006 <- for(i in 1:nrow(Committees2006)){
+    out <- get_itemized_contributions(committee_id = Committees2006$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/7/2006", 
+                    min_date = "01/01/2006")
+  StorageD42006 <- bind_rows(StorageD42006, out)
+  Sys.sleep(20)}
+tibble(StorageD42006)
+saveRDS(StorageD42006, file = "ItemizedContributions2006.RDS")
+tibble(StorageD42006)
+```
+```{r Contributions for 2008, cache=TRUE}
+StorageD42008 <- tibble()
+Contributions2008 <- for(i in 1:nrow(Committees2008)){
+    out <- get_itemized_contributions(committee_id = Committees2008$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/04/2008", 
+                    min_date = "01/01/2008")
+  StorageD42008 <- bind_rows(StorageD42008, out)
+  Sys.sleep(20)}
+tibble(StorageD42008)
+saveRDS(StorageD42008, file = "ItemizedContributions2008.RDS")
+```
+```{r Contributions for 2010, cache=TRUE}
+StorageD42010 <- tibble()
+Contributions2010 <- for(i in 1:nrow(Committees2010)){
+    out <- get_itemized_contributions(committee_id = Committees2010$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/02/2010", 
+                    min_date = "01/01/2010")
+  StorageD42010 <- bind_rows(StorageD42010, out)
+  Sys.sleep(60)}
+tibble(StorageD42010)
+saveRDS(StorageD42010, file = "ItemizedContributions2010.RDS")
+```
+```{r Contributions for 2012, message=TRUE, cache=TRUE, paged.print=TRUE}
+StorageD42012 <- tibble()
+Contributions2012 <- for(i in 1:nrow(Committees2012)){
+    out <- get_itemized_contributions(committee_id = Committees2012$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/06/2012", 
+                    min_date = "01/01/2012")
+  StorageD42012 <- bind_rows(StorageD42012, out)
+  Sys.sleep(60)}
+tibble(StorageD42012)
+saveRDS(StorageD42012, file = "ItemizedContributions2012.RDS")
+StorageD42010 %>% count(committee_id)
+```
+```{r Contributions for 2014, cache=TRUE}
+StorageD42014 <- tibble()
+Contributions2014 <- for(i in 1:nrow(Committees2014)){
+    out <- get_itemized_contributions(committee_id = Committees2014$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/04/2014", 
+                    min_date = "01/01/2014")
+  StorageD42014 <- bind_rows(StorageD42014, out)
+  Sys.sleep(60)}
+tibble(StorageD42014)
+saveRDS(StorageD42014, file = "ItemizedContributions2014.RDS")
+```
+```{r Contributions for 2016, cache=TRUE}
+StorageD42016 <- tibble()
+Contributions2016 <- for(i in 1:nrow(Committees2016)){
+    out <- get_itemized_contributions(committee_id = Committees2016$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/08/2016", 
+                    min_date = "01/01/2016")
+  StorageD42016 <- bind_rows(StorageD42016, out)
+  Sys.sleep(300)}
+tibble(StorageD42016)
+saveRDS(StorageD42016, file = "ItemizedContributions2016.RDS")
+```
+```{r Contributions for 2018, cache=TRUE}
+StorageD42018 <- tibble()
+Contributions2018 <- for(i in 1:nrow(Committees2018)){
+    out <- get_itemized_contributions(committee_id = Committees2018$committee_ID[i], 
+                    api_key = API_KEY, 
+                    data_structure = "tidy", 
+                    max_date = "11/06/2018", 
+                    min_date = "01/01/2018")
+  StorageD42016 <- bind_rows(StorageD42016, out)
+  Sys.sleep(300)}
+tibble(StorageD42018)
+saveRDS(StorageD42018, file = "ItemizedContributions2018.RDS")
+```
+```{r}
+SkinnyContributions <- rbind
+SkinnyContributionsUnique <- unique(StackedContributions)
+```
+#Rename Year Groups
+```{r}
+Cont2004 <- StorageD42004
+Cont2006 <- StorageD42006
+Cont2008 <- StorageD42008
+Cont2010 <- StorageD42010
+Cont2012 <- StorageD42012
+Cont2014 <- StorageD42014
+Cont2016 <- StorageD42016
+Cont2018 <- StorageD42018
+```
+#Generate Campaigns Table
+```{r Load Senate Favorability}
+CampaignswithFav <- Campaigns %>% mutate(Funding_Favorability = paste(committee_ID, two_year_transaction_period))
+tibble(CampaignswithFav)
+```
+
+#Append Funding_Favorability Key and Reduce Years
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny4 <- Cont2004 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny4)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny6 <- Cont2006 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny6)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny8 <- Cont2008 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny8)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny10 <- Cont2010 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny10)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny12 <- Cont2012 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny12)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny14 <- Cont2014 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny14)
+```
+```{r Combine Contributions and Attach Funding_Favorability}
+Skinny16 <- Cont2016 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny16)
+```
+```{r Combine Contributions and Attach Funding_Favorability, cache = TRUE}
+Skinny18 <- Cont2018 %>% select(sub_id, image_number, link_id, contributor_state, report_year, pdf_url, contributor_name, two_year_transaction_period, contribution_receipt_amount, committee_id) %>% mutate(Funding_Favorability = paste(committee_id, two_year_transaction_period))
+tibble(Skinny18)
+```
+#RBind into Stacked Contributions
+```{r}
+StackedContributions <- rbind(StackedCont04to16, Skinny18, deparse.level = 1, make.row.names = TRUE, stringsAsFactors = default.stringsAsFactors(), factor.exclude = TRUE)
+tibble(StackedContributions)
+saveRDS(StackedContributions, file = "StackedContributions_All.RDS")
+```
+#Inner join and append State_Match
+```{r, cache = TRUE}
+JointContributions <- SkinnyContributionsUnique %>% inner_join(CampaignswithFav, by = "Funding_Favorability")
+tibble(JointContributions)
+WithMatch <- JointContributions %>% mutate(State_Match = (contributor_state == state))
+tibble(WithMatch) 
+count(WithMatch$State_Match)
+```
+#Subset In-State and Out of State
+```{r}
+InState <- WithMatch %>% subset(State_Match == "TRUE", select = c(Funding_Favorability, link_id, sub_id, image_number, contribution_receipt_amount,  two_year_transaction_period.x)) %>% mutate(InStateCont = contribution_receipt_amount)
+
+OutofState <- WithMatch %>% subset(State_Match == "FALSE", select = c(Funding_Favorability, link_id, sub_id, image_number, contribution_receipt_amount,  two_year_transaction_period.x)) %>% mutate(OutofStateCont = contribution_receipt_amount)
+
+InStateSummarized <- aggregate(InState$contribution_receipt_amount,  by=list(Funding_Favorability = InState$Funding_Favorability), FUN=sum) %>% dplyr::rename(InState_Contributions = x)
+
+tibble(InStateSummarized)
+
+OutofStateSummarized <- aggregate(OutofState$contribution_receipt_amount,  by=list(Funding_Favorability = OutofState$Funding_Favorability), FUN=sum) %>% dplyr::rename(OutofState_Contributions = x)
+
+tibble(OutofStateSummarized)
+```
+#Join Summaries to Senate_Favorability
+```{r}
+LocalizedContributions <- InStateSummarized %>% inner_join(OutofStateSummarized, by = "Funding_Favorability") %>% mutate(Itemized_Contributions = (OutofState_Contributions + InState_Contributions)) %>% mutate(InState_Proportion = InState_Contributions/Itemized_Contributions) %>% mutate(OutofState_Proportion = OutofState_Contributions/Itemized_Contributions) %>% mutate(validate = (OutofState_Proportion + InState_Proportion))
+
+ContributionSummaries <- LocalizedContributions %>% inner_join(CampaignswithFav, by = "Funding_Favorability")
+
+tibble(LocalizedContributions)
+tibble(ContributionSummaries)
+
+saveRDS(ContributionSummaries, file = "ContributionSummaries.RDS")
+```
+#Linear Regression without Controls
+```{r echo = FALSE, include=FALSE, message=FALSE}
+no_controls <- lm(favorability ~ InState_Proportion, data = ContributionSummaries)
+summary(no_controls)
+```
+#Linear Regression with Controls
+```{r echo = FALSE, include=FALSE, message=FALSE}
+with_controls <- lm(favorability ~ InState_Proportion + party + pollster + two_year_transaction_period, data = ContributionSummaries)
+summary(with_controls)
+```
